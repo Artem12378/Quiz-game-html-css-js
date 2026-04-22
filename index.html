@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="container">
+        <section id='welcome-screen' class="quiz-section">
+            <h1 id="player-from">
+
+            </h1>
+            <form id="player-from">
+                <div class="form-group">
+                    <label for="player-name">Type your name</label>
+                    <input type='text' id="player-name" name="player-name" required>
+
+                </div>
+                <button type="submit" id="start-button" class="btn">
+                </button>
+            </form>
+
+        </section>
+
+
+<!-- QUIZ QUESTION SCREEN -->
+        <section id="question-screen" class="quiz-section">
+
+            <div class="quiz-header">
+                <div class="player-info">
+
+                    <span>Player:
+                        <span id="current-player">PlayerName </span>
+                    </span>
+                </div>
+                 <div class="quiz-progress">
+                        <span>
+                            Question: <span id="current-question">1</span> 
+                            from <span id="total-questions">10</span>
+                        </span>
+                </div>
+                <div class="quiz-progress">
+                    <span>
+                        Score: <span id="current-score">0</span>
+                    </span>
+                </div>
+
+
+                <div id="question-container">
+                    <h2 id="question-text">
+                        Some question
+                    </h2>
+                    <div id="options-container" >
+                        <div class="option">
+                            <input type="radio" name="quiz-option" id="id1">
+                            <label for="id1">option1</label>
+                        </div>
+                    </div>
+                    <div id="options-container" >
+                        <div class="option">
+                            <input type="radio" name="quiz-option" id="id2">
+                            <label for="id2">option2</label>
+                        </div>
+                    </div>
+                    <div id="options-container" >
+                        <div class="option">
+                            <input type="radio" name="quiz-option" id="id3">
+                            <label for="id3">option3</label>
+                        </div>
+                    </div>
+                    <div id="options-container" >
+                        <div class="option">
+                            <input type="radio" name="quiz-option" id="id4">
+                            <label for="id4">option4</label>
+                        </div>
+
+                        <div id="feedback-container" class="hidden">
+                            <p id="feedback-text" >Some halper text</p>
+                            <button id="next-button" class="btn"  >Next Question</button>
+                        </div>
+                    </div>
+                </div>
+        </section>
+
+
+        <!-- RESULT SCREEN -->
+        <section id="result-screen" class="quiz-section">
+                <h2>Results of quiz</h2>
+                <div id="final-result" >
+                    <p>
+                        Congratulations, <span id="result-playerName"> Player1</span> ! 
+                    
+                    </p>  
+                    <P>
+                        Your results:   
+                        <span id="result-score"> 0 
+                                <span>from</span> 
+                                <span id="result-total">10</span>  
+                        </span>
+                        
+                    </P>  
+
+                    <p id="result-precentage" >50%</p>
+                </div>
+                
+                <div id="result-actions" >
+                    <button id="restart-button" class="btn" >Restart</button>
+                </div>
+        </section>
+
+    </div>
+</body>
+
+</html>
