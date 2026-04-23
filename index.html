@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
 
 <body>
     <div class="quiz-container">
         <section id='welcome-screen' class="quiz-section active">
-            <h1 id="player-from">
+            <h1 id="player-from">   
                 Welcome to quiz
             </h1>
             <form id="player-form">
@@ -55,35 +55,18 @@
                     <h2 id="question-text">
                         Some question
                     </h2>
-                    <div id="options-container">
-                        <div class="option correct">
-                            <input type="radio" name="quiz-option" id="id1">
-                            <label for="id1">option1</label>
+                   
+                        <div id="options-container">
+                            <!-- TEMPLATE WELL BE GENERATED -->
                         </div>
-                    </div>
-                    <div id="options-container">
-                        <div class="option incorrect">
-                            <input type="radio" name="quiz-option" id="id2">
-                            <label for="id2">option2</label>
-                        </div>
-                    </div>
-                    <div id="options-container">
-                        <div class="option">
-                            <input type="radio" name="quiz-option" id="id3">
-                            <label for="id3">option3</label>
-                        </div>
-                    </div>
-                    <div id="options-container">
-                        <div class="option">
-                            <input type="radio" name="quiz-option" id="id4">
-                            <label for="id4">option4</label>
-                        </div>
-
-                        <div id="feedback-container" class="hidden ">
+                        
+                        
+                        
+                        <div id="feedback-container"                    class="hidden ">
                             <p id="feedback-text">Some halper text</p>
                             <button id="next-button" class="btn">Next Question</button>
                         </div>
-                    </div>
+                    
                 </div>
 
                 
@@ -93,7 +76,7 @@
         <!-- RESULT SCREEN -->
         <section id="result-screen" class="quiz-section ">
             <h2>Results of quiz</h2>
-            <div id="final-result">
+            <div class="final-result">
                 <p>
                     Congratulations, <span id="result-playerName"> Player1</span> !
 
@@ -116,7 +99,16 @@
         </section>
 
     </div>
-    <script src="quiz-data.js"></script>
+
+    <template id="option-template">
+        <div class="option" >
+            <input type="radio"  id="" >
+            <label for="">option 1</label>
+        </div>
+    </template>
+
+
+<script src="quiz-data.js"></script>
     <script src="index.js"></script>
 </body>
 

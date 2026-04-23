@@ -197,7 +197,7 @@ input[type='radio']{
     color: var(--color-primary);
 }
 
-#final-result{
+.final-result{
     text-align: center;
     margin-bottom: 24px;
 
