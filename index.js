@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const questionText = document.getElementById('question-text');
     const optionsContainer = document.getElementById('options-container');
-    
+
     const optionTemplate = document.getElementById('option-template')
 
     const feedbackContainer = document.getElementById('feedback-container');
@@ -49,36 +49,28 @@ document.addEventListener('DOMContentLoaded', () => {
     totalQuestionsDisplay.innerHTML = questionsCount;
 
 
-    playerForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        currentPlayer = playerNameInput.value.trim();
-        if (!currentPlayer) {
-            alert('Enter your name');
-            return;
-        }
-        currentPlayerDisplay.innerText = currentPlayer;
-        resultPlayerName.innerText = currentPlayer;
-        welcomeScreen.classList.remove('active');
-        questionScreen.classList.add('active')
-        loadQuestion(currentQuestion)
-    })
+    playerForm.addEventListener('submit', startGame)
 
-    nextButton.addEventListener('click',() => {
-        currentQuestion++;
-        hasAnswered = false;
-        feedbackContainer.classList.add('hidden');
-        if(currentQuestion < questionsCount) {
-            loadQuestion(currentQuestion);
-        }else {
-            showResults();
-        }
+    nextButton.addEventListener('click', () => {
+        questionScreen.classList.add('fade-out')
+        feedbackContainer.classList.add('hidden')
+        questionScreen.classList.remove('fade-out')
+        setTimeout(() => {
+            currentQuestion++;
+            hasAnswered = false;
+            if (currentQuestion < questionsCount) {
+                loadQuestion(currentQuestion);
+            } else {
+                showResults();
+            }
+        }, 1000)
     })
 
 
     restartButton.addEventListener('click', resetQuiz);
 
-    function loadQuestion(index){
-        currentQuestionDisplay.textContent = index+1;
+    function loadQuestion(index) {
+        currentQuestionDisplay.textContent = index + 1;
         const question = quizData[index];
         questionText.innerHTML = question.question;
         optionsContainer.innerHTML = '';
@@ -87,10 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
         feedbackContainer.classList.remove('correct');
         feedbackContainer.classList.remove('incorrect');
 
-        question.options.forEach((el,i) => {
+        question.options.forEach((el, i) => {
             const optionElement = optionTemplate.content.cloneNode(true)
             const radioInput = optionElement.querySelector('input')
-            const label = optionElement.querySelector('label') 
+            const label = optionElement.querySelector('label')
 
             const optionId = `option ${index} - ${i} `
             radioInput.id = optionId;
@@ -98,8 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const optionContainer = optionElement.querySelector('.option')
 
-            optionContainer.addEventListener('click', (event) =>{
-                if(!hasAnswered){
+            optionContainer.addEventListener('click', (event) => {
+                if (!hasAnswered) {
                     selectOption(i)
                 }
             })
@@ -108,43 +100,43 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     }
 
-    function showResults(){
+    function showResults() {
         questionScreen.classList.remove('active')
         resultScreen.classList.add('active')
 
         const perecentage = Math.round((Score / questionsCount) * 100);
         resultPrecentage.innerText = `${perecentage}%`
-        resultScore.innerText = Score; 
+        resultScore.innerText = Score;
     }
 
 
-    function selectOption(selectedIndex){
-        if(hasAnswered) return;
-        hasAnswered  = true;
+    function selectOption(selectedIndex) {
+        if (hasAnswered) return;
+        hasAnswered = true;
         const questions = quizData[currentQuestion];
         const options = optionsContainer.querySelectorAll('.option')
         feedbackContainer.classList.remove('hidden')
 
-        options.forEach((opt) =>{
+        options.forEach((opt) => {
             opt.classList.remove('correct')
             opt.classList.remove('incorrect')
         })
 
         const isCorrect = selectedIndex === questions.correctAnswer
-        if(isCorrect){
+        if (isCorrect) {
             Score++;
             options[selectedIndex].classList.add('correct')
-            
+
             feedbackContainer.classList.add('correct')
 
             feedbackText.innerText = `Correct! ${questions.explanation}`
-           
+
             currentScoreDisplay.innerText = score
 
 
         } else {
             options[selectedIndex].classList.add('incorrect')
-            
+
             feedbackContainer.classList.add('incorrect')
 
             feedbackText.innerText = `InCorrect! ${questions.explanation}`
@@ -153,18 +145,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
-    function resetQuiz(){
-            currentQuestion = 0;
-            Score = 0;
-            currentPlayer = '';
-            hasAnswered = false;
+    function resetQuiz() {
+        currentQuestion = 0;
+        Score = 0;
+        currentPlayer = '';
+        hasAnswered = false;
 
-            currentPlayerDisplay.innerText = ''
-            currentQuestionDisplay.innerText = currentQuestion
-            feedbackContainer.classList.remove('correct', 'incorrect')
-            playerNameInput.value = ''
-            welcomeScreen.classList.add('active')
-            resultScreen.classList.remove('active')
+        currentPlayerDisplay.innerText = ''
+        currentQuestionDisplay.innerText = currentQuestion
+        feedbackContainer.classList.remove('correct', 'incorrect')
+        playerNameInput.value = ''
+        welcomeScreen.classList.add('active')
+        resultScreen.classList.remove('active')
     }
 
+
+    function startGame(event){
+        event.preventDefault();
+        currentPlayer = playerNameInput.value.trim();
+        if (!currentPlayer) {
+            alert('Enter your name');
+            return;
+        }
+
+        let countDown = 3
+        const countDownElement = document.createElement('div');
+        countDownElement.classList.add('countDown')
+        welcomeScreen.appendChild(countDownElement)
+        countDownElement.innerText = countDown
+
+        playerForm.classList.add('hidden')
+
+        const timer = setInterval(()=>{
+            countDown--
+            countDownElement.innerText = countDown
+            if(countDown  <= 0){
+                countDownElement.remove()
+                clearInterval(timer);
+
+
+                 currentPlayerDisplay.innerText = currentPlayer;
+                resultPlayerName.innerText = currentPlayer;
+                welcomeScreen.classList.remove('active');
+                questionScreen.classList.add('active')
+                loadQuestion(currentQuestion)
+            }
+        },1000)
+
+       
+    }
 });

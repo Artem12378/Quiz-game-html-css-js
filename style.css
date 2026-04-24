@@ -207,3 +207,18 @@ input[type='radio']{
 #result-actions{
     text-align: center;
 }
+
+
+.fade-out{
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 1s;
+}
+
+.countDown{
+    font-style: 24px;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-align: center;
+    margin-top: 20px;
+}
