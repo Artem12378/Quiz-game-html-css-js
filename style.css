@@ -218,7 +218,45 @@ input[type='radio']{
 .countDown{
     font-style: 24px;
     font-weight: 700;
-    color: var(--color-primary);
+    color: var(--color-incorrect-text);
     text-align: center;
     margin-top: 20px;
+}
+
+#timer-seconds {
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.player-group-select{
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    align-items: center;
+}
+
+#start-button {
+    
+   margin-left: auto;
+}
+
+.spinner {
+    width: 30px;          /* Можно уменьшить под размер строки */
+    height: 30px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    /* Убираем margin-left: auto, если не нужно прижимать к правому краю */
+    margin-left: auto;  
+    margin-right: 30px;
+    
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.hidden {
+    display: none;
 }

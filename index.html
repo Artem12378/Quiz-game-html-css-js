@@ -14,15 +14,40 @@
             <h1 id="player-from">   
                 Welcome to quiz
             </h1>
+            
             <form id="player-form">
                 <div class="form-group">
                     <label for="player-name">Type your name</label>
                     <input type='text' id="player-name" name="player-name" required>
 
                 </div>
-                <button type="submit" id="start-button" class="btn">
+                <div class="player-group-select" >
+                    <select name="theme" id="questions-theme-select" class="btn" required>
+                    <option value="html" >HTML</option>
+                    <option value="css" selected>CSS</option>
+                    <option value="js">JavaScript</option>
+
+                </select>
+
+                <select name="Limit" id="questions-limit-select" class="btn" required>
+                    <option value="10">Get 10 questions</option>
+                    <option value="20" selected>Get 20 questions</option>
+                    <option value="50" >Get 50 questions</option>
+                    <option value="100">Get 100 questions</option>
+
+                </select>
+                
+                <button type="submit" id="start-button" class="btn ">
                     start game
                 </button>
+                <div id="loading-spinner" class="spinner hidden   "></div>
+                <button id="requiest-question-btn" class="btn hidden">Restart quiestions</button>
+
+                </div>
+                
+
+                
+                
             </form>
 
         </section>
@@ -41,10 +66,11 @@
                 <div class="quiz-progress">
                     <span>
                         Question: <span id="current-question">1</span>
-                        from <span id="total-questions">10</span>
+                        from <span id="total-questions">15</span>
                     </span>
                 </div>
                 <div class="quiz-progress">
+                    <span>Time: <span id="timer-seconds">15</span> sec</span>
                     <span>
                         Score: <span id="current-score">0</span>
                     </span>
@@ -108,7 +134,7 @@
     </template>
 
 
-<script src="quiz-data.js"></script>
+
     <script src="index.js"></script>
 </body>
 

@@ -165,3 +165,12 @@ const quizData = [
         explanation: "content.cloneNode(true) возвращает полную копию содержимого шаблона, включая все дочерние элементы."
     }
 ];
+
+const url = "https://js-quiz-questions-server.vercel.app/api/questions";
+const quesries = {
+    theme: "js | html | css",
+    limit: 10,
+    page: 1,
+}
+const restrictedUrls = "https://js-quiz-questions-server.vercel.app/api/restricted"
+const alternativeAPI = "https://country-search-seven-gilt.vercel.app"
