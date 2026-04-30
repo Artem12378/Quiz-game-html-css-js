@@ -5,16 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="common.css">
     <title>Document</title>
 </head>
 
 <body>
+    <nav>
+        <ul>
+            <li  ><a href="index.html">HOME</a></li>
+            <li ><a href="favorites.html">FAVORITES</a></li>
+        </ul>
+    </nav>
     <div class="quiz-container">
         <section id='welcome-screen' class="quiz-section active">
             <h1 id="player-from">   
                 Welcome to quiz
             </h1>
-            <form  id="admin-form" class="admin-form">
+            <button class="btn" id="show-adminForm-btn">show admin form</button>
+            <form  id="admin-form" class="admin-form hidden">
 
                 <select name="action" id="admin-action">
                     <option value="post">Create (POST)</option>
@@ -94,6 +102,9 @@
                     <span>
                         Score: <span id="current-score">0</span>
                     </span>
+                </div>
+                <div class="favorite-toggle">
+                    <span id="favorite-heart" class="add-favorite" >💖</span>
                 </div>
             </div>
 

@@ -1,9 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const adminForm = document.getElementById('admin-form')
-    const methodSelect = document.getElementById('admin-action');
-    const allFields = adminForm.querySelectorAll('input:not([type="submit"]), select');
-    const themeField = document.getElementById('theme');
-    const correctAnswerField = document.getElementById('correct-answer');
+
+
 
     const welcomeScreen = document.getElementById('welcome-screen');
     const questionScreen = document.getElementById('question-screen');
@@ -12,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const spinner = document.getElementById('loading-spinner');
 
 
-    
+    const adminForm = document.getElementById('admin-form')
 
 
 
@@ -46,7 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedbackContainer = document.getElementById('feedback-container');
     const feedbackText = document.getElementById('feedback-text');
     const nextButton = document.getElementById('next-button');
-
+    const showadminFormbtn = document.getElementById('show-adminForm-btn')
+    const addToFavoriteButton = document.getElementById('favorite-heart')
 
 
     const resultPlayerName = document.getElementById('result-playerName')
@@ -64,13 +62,24 @@ document.addEventListener('DOMContentLoaded', () => {
     let isError = false
     let questionsCount = 0;
     let isLastBatch = false;
-
+    let isQuestionSaved = false;
 
 
     
     playerForm.addEventListener('submit', startGame)
 
+    addToFavoriteButton.addEventListener('click', ()=> {
+        if(isQuestionSaved) return;
+        saveQuestionToFavorite()
+        addToFavoriteButton.classList.remove('add-favorite')
+        addToFavoriteButton.classList.add('added-favorite')
+        isQuestionSaved= true
+    })
+
     nextButton.addEventListener('click', () => {
+        isQuestionSaved= false
+        addToFavoriteButton.classList.remove('added-favorite')
+        addToFavoriteButton.classList.add('add-favorite')
         questionScreen.classList.add('fade-out')
         feedbackContainer.classList.add('hidden')
         questionScreen.classList.remove('fade-out')
@@ -85,7 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000)
     })
 
-
+    showadminFormbtn.addEventListener('click', () => {
+        adminForm.classList.toggle('hidden')
+    })
 
     requiestQuestionBtn.addEventListener('click', () => {
         // Берём значения из селектов
@@ -141,46 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
     restartButton.addEventListener('click', resetQuiz);
 
 
-    const originalCorrectPlaceholder = correctAnswerField.placeholder;
-
-    function updateFormByMethod() {
-    const method = methodSelect.value.toLowerCase();
-
-   
-    allFields.forEach(field => {
-        field.style.display = '';
-        field.removeAttribute('required');
-    });
-    
-    correctAnswerField.placeholder = originalCorrectPlaceholder;
-
-    if (method === 'post' || method === 'put') {
-        
-        allFields.forEach(field => {
-            field.setAttribute('required', '');
-        });
-    } 
-    else if (method === 'patch') {
-        
-    } 
-    else if (method === 'delete') {
-      
-        allFields.forEach(field => {
-            if (field !== themeField && field !== correctAnswerField) {
-                field.style.display = 'none';
-                field.removeAttribute('required');
-            }
-        });
-        
-        correctAnswerField.placeholder = 'Номер вопроса (ID)';
-        correctAnswerField.setAttribute('required', '');
-        themeField.setAttribute('required', '');
-    }
-    }
-
-    methodSelect.addEventListener('change', updateFormByMethod);
-
-    updateFormByMethod();
 
     adminForm.addEventListener('submit', (e) =>{handleSubmit(e)})
 
@@ -202,21 +173,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         console.log(questionData)
 
-       
+        if(action.toUpperCase() === 'POST'){
+            SubmitNewQuestion(questionData)
+        }
 
-        
-
-        if(action === "post") {
-            SubmitNewQuestion(questionData);
-        } else if (action === "put") {
-            updateQuestion(questionData);
-        } else if (action === "patch") {
-            partialUpdateQuestion(questionData);
-        } else if (action === "delete") {
-            deleteQuestion(questionData.theme, questionData.correctAnswer);
-        } 
-         else {
-            alert ("Invalid action. Please select POST.");
+        switch(action.toUpperCase()){
+            case 'POST':
+                SubmitNewQuestion(questionData)
+                break;
+            case 'PUT':
+                updateQuestion(questionData)
+                break;
+            case 'PUTCH':
+                partialUpdateQuestion(questionData)
+                break;
+            case 'DELETE':
+                deleteQuestion(questionData.theme, questionData.correctAnswer )
+                break;
+            default:
+                alert('Invalid action. Please select Post')
         }
 
 
@@ -618,42 +593,22 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-
-
-    let accordionBtn = document.getElementById('accordion-btn');
-    let accordionContent = document.getElementById('accordion-content');
-
-    if (!accordionBtn) {
-    
-    const formParent = adminForm.parentNode;
-    const wrapper = document.createElement('div');
-    wrapper.className = 'accordion-wrapper';
-    
-    accordionBtn = document.createElement('button');
-    accordionBtn.id = 'accordion-btn';
-    accordionBtn.textContent = 'Администрирование вопросов ▼';
-    accordionBtn.classList.add('accordion');
-    
-    accordionContent = document.createElement('div');
-    accordionContent.id = 'accordion-content';
-    accordionContent.className = 'accordion-content';
-    
- 
-    formParent.insertBefore(wrapper, adminForm);
-    wrapper.appendChild(accordionBtn);
-    wrapper.appendChild(accordionContent);
-    accordionContent.appendChild(adminForm);
-    
-
-    accordionContent.style.display = 'block';
+    function saveQuestionToFavorite() {
+        const question = quizData[currentQuestion];
+        const favoritesString = localStorage.getItem('favorites');
+        const favorites = favoritesString ? JSON.parse(favoritesString) : [];
+        //favorites.push(question);
+        const newFavorites = [...favorites, question];
+        const newFavoritesString = JSON.stringify(newFavorites)
+        localStorage.setItem('favorites', newFavoritesString );
     }
 
+    
 
-    accordionBtn.addEventListener('click', () => {
-        const isExpanded = accordionContent.style.display === 'block';
-        accordionContent.style.display = isExpanded ? 'none' : 'block';
-        accordionBtn.textContent = isExpanded ? 'Администрирование вопросов ▶' : 'Администрирование вопросов ▼';
-    });
+    
+
+    
+
 
 });
 

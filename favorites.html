@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="common.css">
+        <link rel="stylesheet" href="favorites.css">
+    <title>Favorites Questions</title>
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="favorites.html">FAVORITES</a></li>
+        </ul>
+    </nav>
+
+    <div id="quiz-container">
+        <section id="favorites-screen">
+            <h1>Favorites Questions</h1>
+            <div id="favorites-container">
+                <!-- Favorite questions will be displayed  here -->
+
+            </div>
+
+        </section>
+    </div>
+
+    <template id="favorites-template">
+        <div class="favorite-question">
+            <h2 class="question-text"></h2>
+            <div class="options-container">
+            </div>
+            <p class="correct-answer helper-text"></p>
+            <p class="explanation helper-text"></p>
+            <p class="theme helper-text"></p>
+        </div>
+        <br>
+    <hr>
+    <br>
+    </template>
+    
+    <script src="favorites.js"></script>
+</body>
+
+</html>

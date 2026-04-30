@@ -1,0 +1,22 @@
+
+#quiz-container{
+    margin-top: 40px;
+}
+
+
+#favorites-screen{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+
+.helper-text{
+    font-size: 16px;
+    color: var(--color-text);
+    margin-bottom: 20px;
+    background-color: var(--color-selected-bg);
+    padding: 10px;
+    border-radius: 5px;
+}
