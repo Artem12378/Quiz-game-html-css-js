@@ -73,7 +73,8 @@ label{
 
 }
 
-input[type='text']{
+input[type='text'],
+input[type='number']{
     width: 100%;
     padding: 10px;
     border: 1px solid var(--color-border-light);
@@ -87,6 +88,19 @@ input[type='text']{
     background-color: var(--color-primary);
     
    }
+}
+
+select:not(.btn){
+    width: 100%;
+    border: 1px solid var(--color-border-light);
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s;
+
+    &:focus{
+        background-color: var(--color-primary);
+    }
 }
 
 .btn{

@@ -1,12 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const adminForm = document.getElementById('admin-form')
+    const methodSelect = document.getElementById('admin-action');
+    const allFields = adminForm.querySelectorAll('input:not([type="submit"]), select');
+    const themeField = document.getElementById('theme');
+    const correctAnswerField = document.getElementById('correct-answer');
 
-
-   
     const welcomeScreen = document.getElementById('welcome-screen');
     const questionScreen = document.getElementById('question-screen');
     const resultScreen = document.getElementById('result-screen');
     const quizProgress = document.getElementById('quiz-progress')
     const spinner = document.getElementById('loading-spinner');
+
+
+    
+
 
 
     const playerForm = document.getElementById('player-form');
@@ -21,12 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentPlayerDisplay = document.getElementById('current-player');
 
     const currentQuestionDisplay = document.getElementById('current-question');
-    const totalQuestions = document.getElementById('total-questions')
+    const totalQuestions = document.getElementById('total-questions');
 
 
     const currentScoreDisplay = document.getElementById('current-score');
 
-    const totalQuestionsDisplay = document.getElementById('current-score');
+    const totalQuestionsDisplay = document.getElementById('total-questions');
 
 
 
@@ -55,11 +62,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let quizData = []
     let isLoading = true
     let isError = false
-     let questionsCount = 0;
+    let questionsCount = 0;
+    let isLastBatch = false;
 
 
 
-
+    
     playerForm.addEventListener('submit', startGame)
 
     nextButton.addEventListener('click', () => {
@@ -72,16 +80,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentQuestion < questionsCount) {
                 loadQuestion(currentQuestion);
             } else {
-                showResults();
+                showIntermediateScreen();
             }
         }, 1000)
     })
+
+
 
     requiestQuestionBtn.addEventListener('click', () => {
         // Берём значения из селектов
         const theme = selectedTheme.value;
         const limit = selectedLimit.value;
-        
+
 
         // Сброс UI
         requiestQuestionBtn.classList.add('hidden');
@@ -92,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Функция для одного запроса (возвращает промис)
         function performRequest() {
-            return fetch(`https://jыs-quiz-questions-server.vercel.app/api/questions?limit=${limit}&theme=${theme}`)
+            return fetch(`https://js-quiz-questions-server.vercel.app/api/questions?limit=${limit}&theme=${theme}`)
                 .then(res => {
                     if (!res.ok) throw new Error(`HTTP ${res.status}`);
                     return res.json();
@@ -130,6 +140,124 @@ document.addEventListener('DOMContentLoaded', () => {
 
     restartButton.addEventListener('click', resetQuiz);
 
+
+    const originalCorrectPlaceholder = correctAnswerField.placeholder;
+
+    function updateFormByMethod() {
+    const method = methodSelect.value.toLowerCase();
+
+   
+    allFields.forEach(field => {
+        field.style.display = '';
+        field.removeAttribute('required');
+    });
+    
+    correctAnswerField.placeholder = originalCorrectPlaceholder;
+
+    if (method === 'post' || method === 'put') {
+        
+        allFields.forEach(field => {
+            field.setAttribute('required', '');
+        });
+    } 
+    else if (method === 'patch') {
+        
+    } 
+    else if (method === 'delete') {
+      
+        allFields.forEach(field => {
+            if (field !== themeField && field !== correctAnswerField) {
+                field.style.display = 'none';
+                field.removeAttribute('required');
+            }
+        });
+        
+        correctAnswerField.placeholder = 'Номер вопроса (ID)';
+        correctAnswerField.setAttribute('required', '');
+        themeField.setAttribute('required', '');
+    }
+    }
+
+    methodSelect.addEventListener('change', updateFormByMethod);
+
+    updateFormByMethod();
+
+    adminForm.addEventListener('submit', (e) =>{handleSubmit(e)})
+
+    function handleSubmit(e){
+        e.preventDefault();
+        const action = adminForm.querySelector('#admin-action').value;
+        const questionData = {
+            action: action,
+            question: adminForm.querySelector('#question-input').value,
+            options:[
+                adminForm.querySelector('#option1').value,
+                adminForm.querySelector('#option2').value,
+                adminForm.querySelector('#option3').value,
+                adminForm.querySelector('#option4').value
+            ],
+            correctAnswer: parseInt(adminForm.querySelector('#correct-answer').value),
+            explanation: adminForm.querySelector('#explanation').value,
+            theme: adminForm.querySelector('#theme').value,
+        }
+        console.log(questionData)
+
+       
+
+        
+
+        if(action === "post") {
+            SubmitNewQuestion(questionData);
+        } else if (action === "put") {
+            updateQuestion(questionData);
+        } else if (action === "patch") {
+            partialUpdateQuestion(questionData);
+        } else if (action === "delete") {
+            deleteQuestion(questionData.theme, questionData.correctAnswer);
+        } 
+         else {
+            alert ("Invalid action. Please select POST.");
+        }
+
+
+        function SubmitNewQuestion(questionData){
+            fetch('https://js-quiz-questions-server.vercel.app/api/resource', {
+                method:'POST',
+                body: JSON.stringify(questionData),
+                headers:{
+                    'Content-Type': 'application/json'
+                }
+            })
+        }
+
+        function updateQuestion(questionData){
+            fetch('https://js-quiz-questions-server.vercel.app/api/resource', {
+                method:'PUT',
+                body: JSON.stringify(questionData),
+                headers:{
+                    'Content-Type': 'application/json'
+                }
+            })
+        }
+
+        function partialUpdateQuestion(questionData){
+            fetch('https://js-quiz-questions-server.vercel.app/api/resource', {
+                method:'PUTCH',
+                body: JSON.stringify(questionData),
+                headers:{
+                    'Content-Type': 'application/json'
+                }
+            })
+        }
+
+        function deleteQuestion(theme, question){
+            fetch(`https://js-quiz-questions-server.vercel.app/api/resource?theme=${theme}&question=${question}=12`, {
+                method:'DELETE',
+                
+            })
+        }
+    }
+    
     function loadQuestion(index) {
         currentQuestionDisplay.textContent = index + 1;
 
@@ -174,6 +302,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const perecentage = Math.round((Score / questionsCount) * 100);
         resultPrecentage.innerText = `${perecentage}%`
         resultScore.innerText = Score;
+        resultPlayerName.innerText = currentPlayer;
+
+        const actionsDiv = document.getElementById('result-actions');
+        actionsDiv.innerHTML = ''; 
+        const restartBtn = document.createElement('button');
+        restartBtn.id = 'restart-button';
+        restartBtn.textContent = 'Restart';
+        restartBtn.classList.add('btn');
+        restartBtn.addEventListener('click', () => {
+            resetQuiz();
+        });
+        actionsDiv.appendChild(restartBtn);
+
     }
 
 
@@ -214,13 +355,116 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
+    function continueQuiz() {
+        if (isLastBatch) {
+            // Если это последняя партия, просто показываем результаты
+            showResultsWithThemeSwitch();
+            return;
+        }
+
+        const theme = selectedTheme.value;
+        const limit = selectedLimit.value
+        const offset = quizData.length;
+        const url = `https://js-quiz-questions-server.vercel.app/api/questions?limit=${limit}&theme=${theme}&offset=${offset}`;
+
+        spinner.classList.remove('hidden');
+        startButton.classList.add('hidden');
+        requiestQuestionBtn.classList.add('hidden');
+
+        fetch(url)
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return res.json();
+            })
+            .then(resData => {
+                const newQuestions = resData.data;
+                if (newQuestions.length === 0) {
+                    // Вопросов больше нет
+                    isLastBatch = true;
+                    showResultsWithThemeSwitch();
+                    return;
+                }
+
+                // Добавляем новые вопросы
+                quizData.push(...newQuestions);
+                questionsCount = quizData.length;
+                // Обновляем отображение общего количества
+                totalQuestionsDisplay.innerHTML = questionsCount;
+                totalQuestions.textContent = questionsCount;
+                resultTotal.innerHTML = questionsCount;
+
+                // Если пришло меньше вопросов, чем лимит – это последняя партия
+                if (newQuestions.length < limit) {
+                    isLastBatch = true;
+                }
+
+                questionScreen.classList.add('active');
+                resultScreen.classList.remove('active');
+
+                // Следующий вопрос уже загружен, можно переходить к нему
+                // currentQuestion сейчас равно старому questionsCount (индекс первого нового вопроса)
+                hasAnswered = false;
+                loadQuestion(currentQuestion);
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки следующей партии:', error);
+                showErrorMessage('Не удалось загрузить следующую партию вопросов.');
+                // Показываем кнопку "Повторить" или оставляем пользователя на экране результатов
+                showResultsWithThemeSwitch();
+            })
+            .finally(() => {
+                spinner.classList.add('hidden');
+            });
+    }
+
+    function showResultsWithThemeSwitch() {
+    questionScreen.classList.remove('active');
+    resultScreen.classList.add('active');
+
+    const percentage = Math.round((Score / questionsCount) * 100);
+    resultPrecentage.innerText = `${percentage}%`;
+    resultScore.innerText = Score;
+    resultPlayerName.innerText = currentPlayer;
+
+    const actionsDiv = document.getElementById('result-actions');
+    actionsDiv.innerHTML = '';
+
+    
+    const changeThemeBtn = document.createElement('button');
+    changeThemeBtn.id = 'change-theme-btn';
+    changeThemeBtn.textContent = 'Сменить тему';
+    changeThemeBtn.classList.add('btn');
+    changeThemeBtn.addEventListener('click', () => {
+        resetQuiz();         
+        quizData = [];
+        questionsCount = 0;
+        currentQuestion = 0;
+        Score = 0;
+        isLastBatch = false;
+    });
+
+   
+    const finishBtn = document.createElement('button');
+    finishBtn.textContent = 'Завершить';
+    finishBtn.classList.add('btn');
+    finishBtn.addEventListener('click', () => {
+        showResults(); 
+    });
+
+    actionsDiv.appendChild(changeThemeBtn);
+    actionsDiv.appendChild(finishBtn);
+}
+
     function resetQuiz() {
         currentQuestion = 0;
         Score = 0;
         currentPlayer = '';
         hasAnswered = false;
+        quizData = [];
+        questionsCount = 0;
+        isLastBatch = false;
 
-        currentPlayerDisplay.innerText = ''
+        currentPlayerDisplay.innerText = '';
         currentQuestionDisplay.innerText = currentQuestion
         feedbackContainer.classList.remove('correct', 'incorrect')
         playerNameInput.value = ''
@@ -229,6 +473,44 @@ document.addEventListener('DOMContentLoaded', () => {
         playerForm.classList.remove('hidden')
     }
 
+    function showIntermediateScreen() {
+    
+    questionScreen.classList.remove('active');
+    resultScreen.classList.add('active');
+
+    
+    const percentage = Math.round((Score / questionsCount) * 100);
+    resultPrecentage.innerText = `${percentage}%`;
+    resultScore.innerText = Score;
+    resultPlayerName.innerText = currentPlayer;
+
+  
+    const actionsDiv = document.getElementById('result-actions');
+    actionsDiv.innerHTML = '';
+
+   
+    const continueBtn = document.createElement('button');
+    continueBtn.textContent = 'Продолжить';
+    continueBtn.classList.add('btn');
+    continueBtn.addEventListener('click', () => {
+       
+        resultScreen.classList.remove('active');
+       
+        continueQuiz();
+    });
+
+    
+    const finishBtn = document.createElement('button');
+    finishBtn.textContent = 'Завершить';
+    finishBtn.classList.add('btn');
+    finishBtn.addEventListener('click', () => {
+      
+        showResults();
+    });
+
+    actionsDiv.appendChild(continueBtn);
+    actionsDiv.appendChild(finishBtn);
+}
 
     function startGame(event) {
         event.preventDefault();
@@ -243,6 +525,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const theme = selectedTheme.value
         const limit = selectedLimit.value
 
+        isLastBatch = false;
+
         requiestQuestionBtn.classList.add('hidden');
         const errorDiv = document.getElementById('fetch-error-message');
         if (errorDiv) errorDiv.textContent = '';
@@ -250,17 +534,18 @@ document.addEventListener('DOMContentLoaded', () => {
         startButton.classList.add('hidden');
         requiestQuestionBtn.classList.add('hidden')
 
-        RequestNewQuestions(`https://jss-quiz-questions-server.vercel.app/api/questions?limit=${limit}&theme=${theme}`)
+
+        RequestNewQuestions(`https://js-quiz-questions-server.vercel.app/api/questions?limit=${limit}&theme=${theme}&offset=0`)
             .then(() => {
                 startGameAfterLoad();
             })
-            .catch(()=> {
+            .catch(() => {
                 requiestQuestionBtn.classList.remove('hidden');
                 startButton.classList.add('hidden');
                 showErrorMessage('Не удалось загрузить вопросы. Нажмите "Restart questions".');
             }
-                
-        )
+
+            )
 
 
     }
@@ -334,6 +619,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
+
+    let accordionBtn = document.getElementById('accordion-btn');
+    let accordionContent = document.getElementById('accordion-content');
+
+    if (!accordionBtn) {
+    
+    const formParent = adminForm.parentNode;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'accordion-wrapper';
+    
+    accordionBtn = document.createElement('button');
+    accordionBtn.id = 'accordion-btn';
+    accordionBtn.textContent = 'Администрирование вопросов ▼';
+    accordionBtn.classList.add('accordion');
+    
+    accordionContent = document.createElement('div');
+    accordionContent.id = 'accordion-content';
+    accordionContent.className = 'accordion-content';
+    
+ 
+    formParent.insertBefore(wrapper, adminForm);
+    wrapper.appendChild(accordionBtn);
+    wrapper.appendChild(accordionContent);
+    accordionContent.appendChild(adminForm);
+    
+
+    accordionContent.style.display = 'block';
+    }
+
+
+    accordionBtn.addEventListener('click', () => {
+        const isExpanded = accordionContent.style.display === 'block';
+        accordionContent.style.display = isExpanded ? 'none' : 'block';
+        accordionBtn.textContent = isExpanded ? 'Администрирование вопросов ▶' : 'Администрирование вопросов ▼';
+    });
 
 });
 

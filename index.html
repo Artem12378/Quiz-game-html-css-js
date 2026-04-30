@@ -14,7 +14,27 @@
             <h1 id="player-from">   
                 Welcome to quiz
             </h1>
-            
+            <form  id="admin-form" class="admin-form">
+
+                <select name="action" id="admin-action">
+                    <option value="post">Create (POST)</option>
+                    <option value="PUT">Update (PUT)</option>
+                    <option value="PUTCH">Partical update (PUTCH)</option>
+                    <option value="DELETE">Delete (DELETE)</option>
+                    
+                </select>
+                <input type="text" id="question-input" placeholder="question"/>
+                <input type="text" id="option1" placeholder="Option1"/>
+                <input type="text" id="option2" placeholder="Option2"/>
+                <input type="text" id="option3" placeholder="Option3"/>
+                <input type="text" id="option4" placeholder="Option4"/>
+                
+                <input type="number" id="correct-answer" placeholder="correct Answer(0-3)" value="4"/>
+                <input type="text" id="explanation" placeholder="Explanation"/>
+                <input type="text" id="theme" placeholder="Theme(html, css ,js)"/>
+                <button type="submit" class="btn">Submit</button>
+            </form>
+
             <form id="player-form">
                 <div class="form-group">
                     <label for="player-name">Type your name</label>
